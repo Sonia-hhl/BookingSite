@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Tour List{% endblock %}
+{% block content %}
+    <h2>Tours</h2>
+    <a href="{% url 'tour_create' %}">
+        <button type="button">➕ Create New Tour</button>
+    </a><br><br>
+    <form method="get" class="filter-form">
+        {% csrf_token %}
+        <label for="destination">Destination:</label>
+        <input type="text" id="destination" name="destination" value="{{ search_params.destination|default_if_none:'' }}">
+        <label for="sort">Sort by:</label>
+        <select id="sort" name="sort">
+            <option value="default" {% if search_params.sort == 'default' %}selected{% endif %}>Default</option>
+            <option value="price_asc" {% if search_params.sort == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+            <option value="price_desc" {% if search_params.sort == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+        </select>
+        <input type="submit" value="Filter">
+    </form>
+
+    {% for tour in tours %}
+        <div class="card">
+            <div>
+                <h3>{{ tour.name }}</h3>
+                <p>Destination: {{ tour.destination }}</p>
+                <p>Price: ${{ tour.price }}</p>
+                <p>Duration: {{ tour.duration }} days</p>
+                <form method="post" action="{% url 'tour_delete' tour.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit">Delete</button>
+                </form>
+            </div>
+        </div>
+    {% empty %}
+        <p class="empty-message">No tours found.</p>
+    {% endfor %}
+
+    {% if page_obj.has_other_pages %}
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}&destination={{ search_params.destination|default_if_none:'' }}&sort={{ search_params.sort }}">Previous</a>
+            {% endif %}
+            {% for num in page_obj.paginator.page_range %}
+                <a href="?page={{ num }}&destination={{ search_params.destination|default_if_none:'' }}&sort={{ search_params.sort }}" {% if page_obj.number == num %}style="font-weight: bold;"{% endif %}>{{ num }}</a>
+            {% endfor %}
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}&destination={{ search_params.destination|default_if_none:'' }}&sort={{ search_params.sort }}">Next</a>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endblock %}

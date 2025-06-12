@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Booking Details{% endblock %}
+{% block content %}
+    <h2>Booking Details</h2>
+    {% if request.session.user_id and booking %}
+        <div class="card">
+            <h3>Reservation ID: {{ booking_id }}</h3>
+            <p>Type: {{ type|capfirst }}</p>
+            <p>Details:
+                {% if type == 'hotel' %}
+                    {{ booking.room.hotel.name }} ({{ booking.room.hotel.location_city }})<br>
+                    Room: {{ booking.room.room_number }} ({{ booking.room.room_type.name }})<br>
+                    Price: ${{ booking.room.price_per_night }}/night<br>
+                    Capacity: {{ booking.room.capacity }} guests
+                {% elif type == 'flight' %}
+                    {{ booking.flight.flight_number }} ({{ booking.flight.origin }} to {{ booking.flight.destination }})<br>
+                    Departure: {{ booking.flight.departure_time }}<br>
+                    Seat: {{ booking.seat_number }}<br>
+                    Price: ${{ booking.flight.price }}
+                {% endif %}
+            </p>
+            <p>Date: {{ booking.reservation_date }}</p>
+            <p>Payment: {{ booking.payment_status }}</p>
+            <a href="{% url 'edit_booking' booking_id=booking_id %}">Edit Booking</a>
+        </div>
+    {% else %}
+        <p>Please <a href="{% url 'auth' %}">login</a> to view booking details.</p>
+    {% endif %}
+{% endblock %}

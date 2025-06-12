@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Travel Booking{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head> 
+<body>
+    <header>
+        <h1>Travel Booking</h1>
+        <nav>
+            <a href="{% url 'hotel_list' %}">Hotels</a>
+            <a href="{% url 'flight_list' %}">Flights</a>
+            <a href="{% url 'tour_list' %}">Tours</a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'profile' %}">Profile</a>
+                <a href="{% url 'booking_list' %}">My Bookings</a>
+                <a href="{% url 'auth' %}">Logout</a>
+            {% else %}
+                <a href="{% url 'auth' %}">Login</a>
+            {% endif %}
+        </nav>
+    </header>
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>

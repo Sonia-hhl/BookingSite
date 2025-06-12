@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}Hotel List{% endblock %}
+{% block content %}
+    <h2>Hotels</h2>
+    <form method="get" class="filter-form">
+        <a href="{% url 'hotel_create' %}">
+        <button type="button">➕ Create New Hotel</button>
+        </a><br><br>
+        {% csrf_token %}
+        <label for="city">City:</label>
+        <input type="text" id="city" name="city" value="{{ search_params.city|default_if_none:'' }}">
+        <label for="sort">Sort by:</label>
+        <select id="sort" name="sort">
+            <option value="default" {% if search_params.sort == 'default' %}selected{% endif %}>Default</option>
+            <option value="price_asc" {% if search_params.sort == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+            <option value="price_desc" {% if search_params.sort == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+            <option value="rating_desc" {% if search_params.sort == 'rating_desc' %}selected{% endif %}>Rating</option>
+        </select>
+        <input type="submit" value="Filter">
+    </form>
+
+    {% for hotel in hotels %}
+        <div class="card">
+            <img src="{{ hotel.image_url }}" alt="{{ hotel.name }}">
+            <div>
+                <h3>{{ hotel.name }}</h3>
+                <p>Location: {{ hotel.location }}</p>
+                <p>Price: ${{ hotel.price_per_night }} / night</p>
+                <p>Rating: {{ hotel.rating }} ★</p>
+                <p>Capacity: {{ hotel.capacity }} guests</p>
+                <form action="{% url 'hotel_delete' hotel.id %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" onclick="return confirm('Are you sure you want to delete this hotel?');">❌ Delete</button>
+                </form>
+            </div>
+        </div>
+    {% empty %}
+        <p>No hotels found.</p>
+    {% endfor %}
+
+    {% if page_obj.has_other_pages %}
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}&city={{ search_params.city|default_if_none:'' }}&sort={{ search_params.sort }}">Previous</a>
+            {% endif %}
+            {% for num in page_obj.paginator.page_range %}
+                <a href="?page={{ num }}&city={{ search_params.city|default_if_none:'' }}&sort={{ search_params.sort }}" {% if page_obj.number == num %}style="font-weight: bold;"{% endif %}>{{ num }}</a>
+            {% endfor %}
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}&city={{ search_params.city|default_if_none:'' }}&sort={{ search_params.sort }}">Next</a>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endblock %}

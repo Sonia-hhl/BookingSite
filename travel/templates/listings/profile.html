@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}User Profile{% endblock %}
+{% block content %}
+    <h2>User Profile</h2>
+    {% if request.session.user_id and user %}
+        <div class="card">
+            <h3>{{ user.username }}</h3>
+            <p>Email: {{ user.email }}</p>
+            <p>Phone: {{ user.phone_number|default:'Not provided' }}</p>
+            <p>Role: 
+                {% if user.is_customer %}Customer
+                {% elif user.is_hotel_manager %}Hotel Manager
+                {% elif user.is_airline_manager %}Airline Manager
+                {% endif %}
+            </p>
+            <a href="{% url 'booking_list' %}">View My Bookings</a>
+        </div>
+    {% else %}
+        <p>Please <a href="{% url 'auth' %}">login</a> to view your profile.</p>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create New Tour</title>
+</head>
+<body>
+    <h2>Create a New Tour</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <label for="name">Name:</label>
+        <input type="text" name="name" value="{{ tour.name }}" required><br>
+
+        <label for="description">Description:</label>
+        <textarea name="description">{{ tour.description }}</textarea><br>
+
+        <label for="destination">Destination:</label>
+        <input type="text" name="destination" value="{{ tour.destination }}" required><br>
+
+        <label for="start_date">Start Date:</label>
+        <input type="date" name="start_date" value="{{ tour.start_date }}"><br>
+
+        <label for="end_date">End Date:</label>
+        <input type="date" name="end_date" value="{{ tour.end_date }}"><br>
+
+        <label for="price">Price:</label>
+        <input type="number" name="price" step="0.01" value="{{ tour.price }}"><br>
+
+        <label for="max_participants">Max Participants:</label>
+        <input type="number" name="max_participants" value="{{ tour.max_participants }}"><br>
+
+        <label for="available_slots">Available Slots:</label>
+        <input type="number" name="available_slots" value="{{ tour.available_slots }}"><br>
+
+        <label for="guide_name">Guide Name:</label>
+        <input type="text" name="guide_name" value="{{ tour.guide_name }}"><br>
+
+        <label for="image">Image:</label>
+        {% if tour.image %}
+            <img src="{{ tour.image.url }}" alt="Current Image" width="100"><br>
+        {% endif %}
+        <input type="file" name="image"><br><br>
+
+        <button type="submit">Update</button>
+    </form>
+</body>
+</html>

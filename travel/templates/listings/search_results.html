@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Search Results{% endblock %}
+{% block content %}
+    <h2>Search Results</h2>
+    <form method="get" class="filter-form">
+        {% csrf_token %}
+        <label for="destination">Destination:</label>
+        <input type="text" id="destination" name="destination" value="{{ search_params.destination|default_if_none:'' }}">
+        <label for="guests">Guests:</label>
+        <input type="number" id="guests" name="guests" value="{{ search_params.guests|default_if_none:'1' }}" min="1">
+        <label for="check_in">Check-in:</label>
+        <input type="date" id="check_in" name="check_in" value="{{ search_params.check_in|default_if_none:'2025-05-12' }}">
+        <label for="check_out">Check-out:</label>
+        <input type="date" id="check_out" name="check_out" value="{{ search_params.check_out|default_if_none:'2025-05-12' }}">
+        <label for="sort">Sort by:</label>
+        <select id="sort" name="sort">
+            <option value="price_asc" {% if search_params.sort == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+            <option value="price_desc" {% if search_params.sort == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+            <option value="rating_desc" {% if search_params.sort == 'rating_desc' %}selected{% endif %}>Rating</option>
+        </select>
+        <input type="submit" value="Search">
+    </form>
+
+    {% for room in results %}
+        <div class="card">
+            <img src="{{ room.hotel.main_image.url|default:'https://placehold.co/150x100' }}" alt="{{ room.hotel.name }}">
+            <div>
+                <h3>{{ room.hotel.name }} - Room {{ room.room_number }}</h3>
+                <p>Location: {{ room.hotel.location_city }}</p>
+                <p>Price: ${{ room.price_per_night }} / night</p>
+                <p>Rating: {{ room.hotel.star_rating }} ★</p>
+                <p>Capacity: {{ room.capacity }} guests</p>
+                <a href="{% url 'add_booking' %}">Book Now</a>
+            </div>
+        </div>
+    {% empty %}
+        <p class="empty-message">No results found.</p>
+    {% endfor %}
+{% endblock %}
