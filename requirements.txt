@@ -13,6 +13,6 @@ pytz==2024.2
 PyYAML==6.0.2
 sqlparse==0.5.3
 tzdata==2024.2
-uritemplate==4.2.0
+uritemplate==4.1.1
 wheel==0.44.0
 build==1.2.2
